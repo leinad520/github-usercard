@@ -3,16 +3,28 @@
            https://api.github.com/users/<your name>
 */
 
+axios.get('https://api.github.com/users/leinad520')
+  .then(res => {
+    let component = componentCreator(res);
+    document.querySelector('.cards').appendChild(component);
+  })
+  .catch(err => console.log('woah, an error: ' + err));
+  
+
+  
+
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
-
+  
    Skip to Step 3.
 */
 
 /* Step 4: Pass the data received from Github into your function, 
            create a new component and add it to the DOM as a child of .cards
 */
+
 
 /* Step 5: Now that you have your own card getting added to the DOM, either 
           follow this link in your browser https://api.github.com/users/<Your github name>/followers 
@@ -24,7 +36,26 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ['tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell'];
+// iterate over the array and string together w the api link
+// create axios.get function
+// run axios.get on each
+
+let axiosFunc = function(userLink) {
+  axios.get(userLink)
+  .then(res => {
+    let component = componentCreator(res);
+    document.querySelector('.cards').appendChild(component);
+  })
+  .catch(err => console.log('woah, an error: ' + err));
+}
+
+followersArray.forEach(user => {
+  const userAPI = 'https://api.github.com/users/' + user;
+  axiosFunc(userAPI);
+})
+
+
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -46,10 +77,60 @@ const followersArray = [];
 
 */
 
+function componentCreator(obj){
+  const cardDiv = document.createElement('div');
+  const image = document.createElement('img');
+  const cardInfoDiv = document.createElement('div');
+  const name = document.createElement('h3');
+  const userName = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const profileLink = document.createElement('a');
+  const followers = document.createElement('p')
+  const following = document.createElement('p')
+  const bio = document.createElement('p');
+
+
+  cardDiv.classList.add('card');
+  image.src = obj.data.avatar_url;
+  cardInfoDiv.classList.add('card-info')
+  name.classList.add('name')
+  userName.classList.add('username');
+  profileLink.href = obj.data.url;
+
+  name.textContent = obj.data.name;
+  userName.textContent = obj.data.login;
+  location.textContent = obj.data.location;
+  profile.textContent = "Profile: ";
+  profileLink.textContent = obj.data.url;
+  followers.textContent = `Followers: ${obj.data.followers}`;
+  following.textContent = `Following: ${obj.data.following}`;
+  bio.textContent = `Bio: ${obj.data.bio}`;
+
+  cardDiv.appendChild(image);
+  cardDiv.appendChild(cardInfoDiv);
+  cardInfoDiv.appendChild(name);
+  cardInfoDiv.appendChild(userName);
+  cardInfoDiv.appendChild(location);
+  cardInfoDiv.appendChild(profile);
+  cardInfoDiv.appendChild(followers);
+  cardInfoDiv.appendChild(following);
+  cardInfoDiv.appendChild(bio);
+  profile.appendChild(profileLink)
+
+  return cardDiv;
+}
+
 /* List of LS Instructors Github username's: 
   tetondan
   dustinmyers
   justsml
   luishrd
   bigknell
+*/
+
+/* recap
+1. create funciton that makes component out of api user link
+2. Retrieve api data with axios and append to DOM
+
 */
